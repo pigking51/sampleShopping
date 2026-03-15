@@ -1,4 +1,4 @@
-# POINTTWOFIVE · SECOND 쇼핑몰 수정 가이드
+# 우선심사용 쇼핑몰 목업 수정 가이드
 
 <div align="center">
 
@@ -237,7 +237,7 @@ src/
 
 <div align="center">
 
-**© 2024 POINTTWOFIVE · SECOND. All rights reserved.**
+**© 2026 pigking51. All rights reserved.**
 
 이 가이드는 언제든지 수정하여 사용할 수 있습니다
 

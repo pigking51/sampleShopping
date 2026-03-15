@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 탭에 표시되는 것 -->
     <title>샘플 쇼핑몰</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
-      /* Custom animations */
       .group:hover .group-hover\:scale-105 {
         transform: scale(1.05);
       }
@@ -50,6 +50,7 @@
 
     <div class="flex">
       <!-- Sidebar -->
+      <!-- 좌측에 있는 메뉴, 아래 a태그들을 수정하여 원하는대로 수정하면 됨 -->
       <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out mt-16 lg:mt-0">
         <div class="p-6">
           <nav class="space-y-4">
@@ -84,7 +85,7 @@
           </div>
 
           <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Products will be inserted here by JavaScript -->
+            <!-- 상품들은 script.js에서 받아옴, 상품의 추가, 삭제 수정을 하려면 script.js에서 수정해야 됨 -->
           </div>
         </div>
       </main>

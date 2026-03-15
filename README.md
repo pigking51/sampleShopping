@@ -2,8 +2,6 @@
 
 <div align="center">
 
-![POINTTWOFIVE · SECOND](https://img.shields.io/badge/POINTTWOFIVE·SECOND-000000?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMNiA3TDYgMTdMMTIgMjJMMTggMTdMThMNzYgMTJMMiIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4K&logoColor=white)
-
 ### **GitHub에서 직접 수정하고 바로 적용되는 쇼핑몰**
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pigking51/sampleShopping)

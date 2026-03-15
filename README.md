@@ -159,7 +159,28 @@ index.html
 
 ---
 
-## 📁 이미지 관리
+## � 저작권 표시 수정
+
+### 📁 파일 경로
+```html
+index.html
+```
+
+### 📍 수정 위치
+Footer의 저작권 표시 부분 수정:
+
+```html
+<div class="text-center mt-8 text-sm text-gray-500">
+  <p>&copy; 2024 POINTTWOFIVE · SECOND. All rights reserved.</p>
+  <!-- 저작권 표시 - 필요시 연도나 브랜드명만 수정 가능 -->
+</div>
+```
+
+> 💡 **팁:** 저작권 표시는 법적 중요성이 있으므로 연도나 브랜드명만 수정하세요
+
+---
+
+## �📁 이미지 관리
 
 ### 📂 이미지 폴더 구조
 ```

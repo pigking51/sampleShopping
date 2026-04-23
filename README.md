@@ -123,16 +123,7 @@ index.html
 ### 🔄 로고 변경 방법
 
 #### 1. 이미지 로고로 변경:
-```html
-<!-- h1 태그 주석 처리 -->
-<!-- <h1>POINTTWOFIVE · SECOND</h1> -->
-
-<!-- img 태그 주석 해제 -->
-<img src="src/images/logo.png" alt="logo" class="w-10 h-10" />
-```
-
-#### 2. 이미지 업로드:
-로고 이미지를 `src/images/logo.png`로 업로드
+로고 이미지를 `src/images/logo.jpg`로 업로드
 
 ---
 

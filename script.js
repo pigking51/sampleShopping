@@ -396,6 +396,9 @@ class ModalManager {
     confirmMessage.textContent = '✓ 설정이 저장되었습니다';
     document.body.appendChild(confirmMessage);
     
+    // 모달 닫기
+    this.closeModal();
+    
     // 3초 후 자동 제거
     setTimeout(() => {
       if (confirmMessage.parentNode) {

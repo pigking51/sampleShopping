@@ -76,7 +76,14 @@ class DataManager {
   }
 
   saveProducts(products) {
-    localStorage.setItem(this.storageKey, JSON.stringify(products));
+    // 이미지 데이터를 제외하고 저장
+    const productsToSave = products.map(product => ({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: null // 이미지는 localStorage에 저장하지 않음
+    }));
+    localStorage.setItem(this.storageKey, JSON.stringify(productsToSave));
   }
 
   getSettings() {
@@ -84,13 +91,20 @@ class DataManager {
   }
 
   saveSettings(settings) {
-    localStorage.setItem(this.settingsKey, JSON.stringify(settings));
+    // 이미지 데이터를 제외하고 저장
+    const settingsToSave = {
+      brandName: settings.brandName,
+      copyrightBrand: settings.copyrightBrand,
+      logoImage: null, // 이미지는 localStorage에 저장하지 않음
+      useLogo: settings.useLogo
+    };
+    localStorage.setItem(this.settingsKey, JSON.stringify(settingsToSave));
   }
 
   addProduct(product) {
     const products = this.getProducts();
     const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-    const newProduct = { ...product, id: newId };
+    const newProduct = { ...product, id: newId, image: null };
     products.push(newProduct);
     this.saveProducts(products);
     return newProduct;
@@ -100,7 +114,7 @@ class DataManager {
     const products = this.getProducts();
     const index = products.findIndex(p => p.id === id);
     if (index !== -1) {
-      products[index] = { ...products[index], ...updates };
+      products[index] = { ...products[index], ...updates, image: null }; // 이미지는 업데이트하지 않음
       this.saveProducts(products);
       return products[index];
     }
@@ -127,6 +141,8 @@ class ModalManager {
     this.copyrightBrandInput = document.getElementById('copyrightBrandInput');
     this.productList = document.getElementById('productList');
     this.productToDelete = null;
+    this.currentLogoUrl = null; // 현재 로고 URL 저장
+    this.productImages = new Map(); // 상품별 이미지 URL 저장
     
     this.initializeEventListeners();
   }
@@ -146,15 +162,18 @@ class ModalManager {
     this.logoImageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const settings = this.dataManager.getSettings();
-          settings.logoImage = event.target.result;
-          settings.useLogo = true;
-          this.dataManager.saveSettings(settings);
-          this.updateBrandDisplay();
-        };
-        reader.readAsDataURL(file);
+        // 이전 URL 해제
+        if (this.currentLogoUrl) {
+          URL.revokeObjectURL(this.currentLogoUrl);
+        }
+        
+        // 새로운 임시 URL 생성
+        this.currentLogoUrl = URL.createObjectURL(file);
+        
+        const settings = this.dataManager.getSettings();
+        settings.useLogo = true;
+        this.dataManager.saveSettings(settings);
+        this.updateBrandDisplay();
       }
     });
 
@@ -251,6 +270,12 @@ class ModalManager {
 
   confirmDelete() {
     if (this.productToDelete !== null) {
+      // 삭제될 상품의 이미지 URL 해제
+      if (this.productImages.has(this.productToDelete)) {
+        URL.revokeObjectURL(this.productImages.get(this.productToDelete));
+        this.productImages.delete(this.productToDelete);
+      }
+      
       this.dataManager.deleteProduct(this.productToDelete);
       this.renderProductList();
       this.renderMainProducts(); // 메인 화면 업데이트
@@ -268,14 +293,14 @@ class ModalManager {
     const brandElements = document.querySelectorAll('.brand-name');
     const logoElements = document.querySelectorAll('.brand-logo');
     
-    // 로고 이미지가 있으면 항상 로고 표시
-    if (settings.useLogo && settings.logoImage) {
+    // 로고 이미지가 있으면 임시 URL로 표시
+    if (settings.useLogo && this.currentLogoUrl) {
       brandElements.forEach(el => {
         el.style.display = 'none';
       });
       
       logoElements.forEach(el => {
-        el.src = settings.logoImage;
+        el.src = this.currentLogoUrl;
         el.style.display = 'block';
       });
     } else {
@@ -377,12 +402,17 @@ class ModalManager {
   }
 
   handleProductImageChange(id, file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      this.dataManager.updateProduct(id, { image: event.target.result });
-      this.renderMainProducts(); // 메인 화면 업데이트
-    };
-    reader.readAsDataURL(file);
+    // 이전 URL 해제
+    if (this.productImages.has(id)) {
+      URL.revokeObjectURL(this.productImages.get(id));
+    }
+    
+    // 새로운 임시 URL 생성
+    const imageUrl = URL.createObjectURL(file);
+    this.productImages.set(id, imageUrl);
+    
+    // localStorage에는 저장하지 않고 화면만 업데이트
+    this.renderMainProducts();
   }
 
   deleteProduct(id) {
@@ -411,32 +441,35 @@ class ModalManager {
     const products = this.dataManager.getProducts();
     const productGrid = document.getElementById('productGrid');
     
-    productGrid.innerHTML = products.map(product => `
-      <div class="group cursor-pointer">
-        <div class="bg-gray-100 aspect-square mb-4 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
-          ${product.image ? `
-            <img 
-              src="${product.image}" 
-              alt="${product.name}"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            />
-          ` : ''}
-          <div class="w-full h-full bg-gray-200 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 ease-in-out" style="${product.image ? 'display: none;' : 'display: flex;'}">
-            <span class="text-gray-500 text-sm">상품 이미지</span>
+    productGrid.innerHTML = products.map(product => {
+      const imageUrl = this.productImages.get(product.id);
+      return `
+        <div class="group cursor-pointer">
+          <div class="bg-gray-100 aspect-square mb-4 overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4">
+            ${imageUrl ? `
+              <img 
+                src="${imageUrl}" 
+                alt="${product.name}"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              />
+            ` : ''}
+            <div class="w-full h-full bg-gray-200 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 ease-in-out" style="${imageUrl ? 'display: none;' : 'display: flex;'}">
+              <span class="text-gray-500 text-sm">상품 이미지</span>
+            </div>
+          </div>
+          <h3 class="text-lg font-light text-gray-900 mb-2 group-hover:text-gray-700 transition-colors duration-200">
+            ${product.name}
+          </h3>
+          <div class="flex justify-between items-center">
+            <span class="text-xl font-light text-gray-900">${product.price}</span>
+            <button class="bg-white border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:shadow-sm">
+              장바구니 담기
+            </button>
           </div>
         </div>
-        <h3 class="text-lg font-light text-gray-900 mb-2 group-hover:text-gray-700 transition-colors duration-200">
-          ${product.name}
-        </h3>
-        <div class="flex justify-between items-center">
-          <span class="text-xl font-light text-gray-900">${product.price}</span>
-          <button class="bg-white border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:shadow-sm">
-            장바구니 담기
-          </button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 }
 

@@ -120,6 +120,7 @@
 
             <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <!-- 상품들은 script.js에서 받아옴, 상품의 추가, 삭제 수정을 하려면 script.js에서 수정해야 됨 -->
+              <!-- 260424 상품 localStorage에 담아두기로 함 -->
             </div>
           </div>
         </main>
@@ -140,7 +141,7 @@
           </div>
           <div class="text-center mt-8 text-sm text-gray-500">
             <p><span class="copyright-brand">&copy; 2024 POINTTWOFIVE · SECOND. All rights reserved.</span></p>
-            <!-- 저작권 표시 - 필요시 연도나 브랜드명만 수정 가능 -->
+            <!-- 하단부 표시 부분 -->
           </div>
         </div>
       </footer>
@@ -169,9 +170,9 @@
           <p class="mt-1 text-xs text-gray-500">로고 이미지를 선택하면 자동으로 적용됩니다</p>
         </div>
 
-        <!-- 저작권 브랜드명 설정 -->
+        <!-- 하단부 내용 입력 -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">저작권 브랜드명</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">하단부 내용</label>
           <input 
             type="text" 
             id="copyrightBrandInput"
